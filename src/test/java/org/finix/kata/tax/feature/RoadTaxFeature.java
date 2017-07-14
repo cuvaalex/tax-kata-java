@@ -14,6 +14,7 @@ import java.time.LocalDate;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.verify;
 
 
 /**
@@ -34,13 +35,13 @@ public class RoadTaxFeature {
     @Test
     public void should_return_165GBP_when_less_3500kg_otherwise_190GBP() {
         BDDMockito.given(vehicle.type()).willReturn(VehicleType.VAN);
-        BDDMockito.given(vehicle.weight()).willReturn(100);
+        BDDMockito.given(vehicle.weightInKg()).willReturn(100);
 
         int taxResult = tax.computeAnnualTax(vehicle);
 
         assertThat(taxResult, is(165));
 
-        BDDMockito.given(vehicle.weight()).willReturn(4000);
+        BDDMockito.given(vehicle.weightInKg()).willReturn(4000);
         taxResult = tax.computeAnnualTax(vehicle);
 
         assertThat(taxResult, is(190));
@@ -54,12 +55,28 @@ public class RoadTaxFeature {
 
         int taxResult = tax.computeAnnualTax(vehicle);
 
-        assertThat(taxResult, is(110));
+        verify(vehicle).register();
+        verify(vehicle).engineSize();
+    }
+    @Test
+    public void should_check_on_c02_if_car_register_after_01March2001() {
+        BDDMockito.given(vehicle.type()).willReturn(VehicleType.CAR);
+        BDDMockito.given(vehicle.register()).willReturn(LocalDate.of(2001,3,2));
+        BDDMockito.given(vehicle.co2Emission()).willReturn(165);
 
-        BDDMockito.given(vehicle.engineSize()).willReturn(1700);
+        int taxResult = tax.computeAnnualTax(vehicle);
 
-        taxResult = tax.computeAnnualTax(vehicle);
+        verify(vehicle).register();
+        verify(vehicle).co2Emission();
+    }
+    
+    @Test 
+        public void should_check_on_engine_size_if_motorcycle() {
+        BDDMockito.given(vehicle.type()).willReturn(VehicleType.MOTORCYCLE);
+        BDDMockito.given(vehicle.engineSize()).willReturn(155);
 
-        assertThat(taxResult, is(165));
+        int taxResult = tax.computeAnnualTax(vehicle);
+
+        verify(vehicle).engineSize();
     }
 }

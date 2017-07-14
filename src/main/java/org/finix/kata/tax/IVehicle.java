@@ -8,9 +8,11 @@ import java.time.LocalDate;
 public interface IVehicle {
     VehicleType type();
 
-    int weight();
+    int weightInKg();
 
     LocalDate register();
 
     int engineSize();
+
+    int co2Emission();
 }
