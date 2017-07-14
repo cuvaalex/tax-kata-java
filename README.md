@@ -1,5 +1,5 @@
 # tax-kata-java
-Resolution of the Tax-kata with Java 8
+Resolution of the Tax-kata with Java 8, junit-quickcheck and mockito
 
 This kata was first done during one of our GenevaJUG Dojo
 
